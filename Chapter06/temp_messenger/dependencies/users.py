@@ -6,6 +6,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import IntegrityError
 
+from werkzeug.security import generate_password_hash, check_password_hash
+from ..utils import runtime
 
 HASH_WORK_FACTOR = 15
 Base = declarative_base()
@@ -33,8 +35,9 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     first_name = Column(Unicode(length=128))
     last_name = Column(Unicode(length=128))
-    email = Column(Unicode(length=256), unique=True)
-    password = Column(LargeBinary())
+    email = Column(Unicode(length=256), unique=True, index=True)
+    # password = Column(LargeBinary())
+    password = Column(Unicode(length=255))
 
 
 class UserWrapper:
@@ -74,10 +77,17 @@ class UserWrapper:
 
         return user
 
+    @runtime
     def authenticate(self, email, password):
+        """这个函数耗费时间比较久"""
         user = self.get(email)
 
-        if not bcrypt.checkpw(password.encode(), user.password):
+        # 这个密码验证机制效率太慢
+        # if not bcrypt.checkpw(password.encode(), user.password):
+        #     message = 'Incorrect password for {}'.format(email)
+        #     raise AuthenticationError(message)
+
+        if not check_password_hash(user.password, password):
             message = 'Incorrect password for {}'.format(email)
             raise AuthenticationError(message)
 
@@ -96,7 +106,9 @@ class UserStore(DatabaseSession):
 
 
 def hash_password(plain_text_password):
-    salt = bcrypt.gensalt(rounds=HASH_WORK_FACTOR)
-    encoded_password = plain_text_password.encode()
+    # 这个密码验证机制效率太慢
+    # salt = bcrypt.gensalt(rounds=HASH_WORK_FACTOR)
+    # encoded_password = plain_text_password.encode()
+    # return bcrypt.hashpw(encoded_password, salt)
 
-    return bcrypt.hashpw(encoded_password, salt)
+    return generate_password_hash(plain_text_password)
