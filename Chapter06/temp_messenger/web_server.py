@@ -14,6 +14,8 @@ from flask import (
     url_for,
 )
 
+from .utils import runtime
+
 with open('config.yaml', 'r') as config_file:
     config = yaml.load(config_file)
 
@@ -69,17 +71,19 @@ class LoginView(MethodView):
         else:
             return render_template('login.html')
 
+    @runtime
     def post(self):
         email = request.form['email']
         password = request.form['password']
 
         with ClusterRpcProxy(config) as cluster_rpc:
             try:
+                # maybe raise AuthenticationError
                 cluster_rpc.user_service.authenticate_user(
                     email=email,
                     password=password,
                 )
-            except RemoteError as err:
+            except RemoteError as err:  # nameko.exceptions.RemoteError
                 app.logger.error(
                     'Bad login for %s - %s', email, str(err)
                 )
@@ -115,7 +119,7 @@ class SignUpView(MethodView):
                     email=email,
                     password=password,
                 )
-            except RemoteError as err:
+            except RemoteError as err:  # nameko.exceptions.RemoteError
                 message = 'Unable to create user - {}'.format(
                     err.value
                 )

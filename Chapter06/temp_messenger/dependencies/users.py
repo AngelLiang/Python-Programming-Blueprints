@@ -90,6 +90,7 @@ class UserStore(DatabaseSession):
         super().__init__(Base)
 
     def get_dependency(self, worker_ctx):
+        """override"""
         database_session = super().get_dependency(worker_ctx)
         return UserWrapper(session=database_session)
 
