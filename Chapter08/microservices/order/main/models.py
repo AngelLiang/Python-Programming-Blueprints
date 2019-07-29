@@ -9,7 +9,9 @@ class OrderCustomer(models.Model):
 
 
 class Order(models.Model):
+    """订单"""
 
+    # 订单状态
     ORDER_STATUS = (
         (1, 'Received'),
         (2, 'Processing'),
@@ -19,6 +21,7 @@ class Order(models.Model):
         (6, 'Cancelled'),
     )
 
+    # 订单客户
     order_customer = models.ForeignKey(
         OrderCustomer,
         on_delete=models.CASCADE
@@ -36,16 +39,19 @@ class Order(models.Model):
 
 
 class OrderItems(models.Model):
+    """订单项"""
     class Meta:
         verbose_name_plural = 'Order items'
 
     product_id = models.IntegerField()
     name = models.CharField(max_length=200)
     quantity = models.IntegerField()
+    # 单位价格
     price_per_unit = models.DecimalField(
         max_digits=9,
         decimal_places=2,
         default=0
     )
+    # 订单
     order = models.ForeignKey(
         Order, on_delete=models.CASCADE, related_name='items')
