@@ -8,6 +8,11 @@ MESSAGE_LIFETIME = 10000
 
 
 class MessageStore(DependencyProvider):
+    """ 2 Creating the Dependency Provider
+
+    We need to create a Nameko Dependency Provider to
+    utilize this client for use with our services.
+    """
 
     def setup(self):
         redis_url = self.container.config['REDIS_URL']
@@ -21,6 +26,11 @@ class MessageStore(DependencyProvider):
 
 
 class RedisClient:
+    """ 1 Designing the Client
+
+    We will now create a Redis client with a simple method that
+    will get a message.
+    """
 
     def __init__(self, url):
         self.redis = StrictRedis.from_url(
@@ -60,6 +70,7 @@ class RedisClient:
     #     return messages
 
     def get_all_messages(self):
+        """Sorting messages"""
         return [
             {
                 'id': message_id,

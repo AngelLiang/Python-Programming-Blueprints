@@ -10,6 +10,8 @@ from .dependencies.jinja2 import Jinja2
 
 
 class MessageService:
+    """ 3 Creating our Message Service
+    """
 
     name = 'message_service'
 
