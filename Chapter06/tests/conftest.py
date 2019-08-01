@@ -9,10 +9,12 @@ from temp_messenger.message_service import MessageService
 from temp_messenger.user_service import UserService
 
 
-TEST_DB_URI = (
-    'postgresql+psycopg2://postgres:secret@localhost:'
-    '5433/users?client_encoding=utf8'
-)
+# TEST_DB_URI = (
+#     'postgresql+psycopg2://postgres:secret@localhost:'
+#     '5433/users?client_encoding=utf8'
+# )
+# TEST_DB_URI = 'sqlite:///users-test.db'
+TEST_DB_URI = 'sqlite:///:memory:'
 
 
 @pytest.fixture()
@@ -75,10 +77,11 @@ def model_base():
 
 @pytest.fixture(scope='session')
 def db_engine_options():
-    return dict(
-        client_encoding='utf8',
-        connect_args={'client_encoding': 'utf8'}
-    )
+    # return dict(
+    #     client_encoding='utf8',
+    #     connect_args={'client_encoding': 'utf8'}
+    # )
+    return {}
 
 
 @pytest.fixture
